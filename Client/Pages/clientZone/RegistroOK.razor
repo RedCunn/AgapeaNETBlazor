@@ -1,0 +1,18 @@
+﻿@page "/Cliente/RegistroOK"
+@inject NavigationManager navigate
+<div class="container mt-5">
+    <h1 class="alert alert-success text-center">👹 Registro Exitoso 👹</h1>
+    <div class="alert alert-info">
+        <p>
+            ¡Hemos recibido tu registro! Para activar tu cuenta, por favor revisa tu correo electrónico
+            y sigue las instrucciones que hemos enviado. Si no recibes el correo electrónico en unos minutos,
+            asegúrate de revisar tu carpeta de correo no deseado (spam).
+        </p>
+    </div>
+    <button class="btn btn-primary btn-lg" onclick="@(()=>this.navigate.NavigateTo("/Cliente/Login"))">Inicia sesión con tu cuenta</button>
+    <button class="btn btn-primary btn-lg" onclick="@(()=>this.navigate.NavigateTo("/Tienda/Libros"))">VOLVER A LA TIENDA</button>
+</div>
+
+@code {
+
+}

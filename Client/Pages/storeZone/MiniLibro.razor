@@ -1,0 +1,57 @@
+﻿@* como no tiene @page no va a ser invocable por el modulo de enrutamiento ,
+    recibira como param desde el comp.daddy Libros.razor el valor del libro a pintar *@
+@using Agapea_Blazor.Client.Models.Services.Interfaces
+@inject NavigationManager navigate
+@inject IStorageService storageSvc
+
+<div class="mb-3" style="max-width: 540px;" id="cardLibro-@showedBook.ISBN13"
+     onmouseover="@(() => { this.BuyButtonStyle="visibility:visible"; } )"
+     onmouseout="@(() => { this.BuyButtonStyle="visibility:hidden"; } )">
+
+    <div class="row g-0">
+        <!-- columna para miniimagen del libro y boton comprar-->
+        <div class="col-md-4 text-center" style="height: 170px">
+            <div class="w-100" style="height: 80%">
+                <a onclick="@(()=>{this.navigate.NavigateTo($"/Tienda/MostrarDetallesLibro/{showedBook.ISBN13}");})">
+                    <img class="img-fluid rounded-start rounded-end" src="@showedBook.ImagenLibroBASE64" alt="...">
+                </a>
+            </div>
+            <a onclick="@AddBookToOrder"
+               id="btnComprar-@showedBook.ISBN13"
+               class="btn btn-primary btn-sm">
+                Comprar...
+            </a>
+        </div>
+
+        <!-- columna para titulo del libro, autores, editorial, pags y precio-->
+        <div class="col-md-8">
+            <div class="ms-3">
+                <h6 class="card-title" style="height: 50px">
+                    <a class="text-decoration-none"
+                       onclick="@(()=>{this.navigate.NavigateTo($"/Tienda/MostrarDetallesLibro/{showedBook.ISBN13}");})">
+                       @showedBook.Titulo
+                    </a>
+                </h6>
+                <div class="card-text">@showedBook.Autores</div>
+                <div class="card-text">@showedBook.Editorial</div>
+                <div class="card-text"><small class="text-muted">@showedBook.NumeroPaginas  páginas</small></div>
+                <div class="card-text"><strong>@showedBook.Precio €</strong></div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+@code {
+    public String BuyButtonStyle { get; set; } = "visibility : hidden";
+
+    [Parameter]
+    public Libro showedBook { get; set; }
+
+    public void AddBookToOrder()
+    {
+        this.storageSvc.OperateOrderItems(this.showedBook, 1, "add");
+        this.navigate.NavigateTo("/Tienda/MostrarPedido");
+    }
+}

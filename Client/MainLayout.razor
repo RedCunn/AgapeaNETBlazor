@@ -1,0 +1,86 @@
+﻿@using Agapea_Blazor.Client.Models.Services.Interfaces
+@using Agapea_Blazor.Client.Pages.storeZone
+@using Agapea_Blazor.Client.Pages.clientZone
+@using System.Text.RegularExpressions
+@inherits LayoutComponentBase
+
+@inject IStorageService storageSvc
+@inject NavigationManager navigate
+@inject IRestService restSvc
+
+<CascadingValue Value="loggedClient" Name="loggedClient">
+    <CascadingValue Value="itemsList" Name="carrito">
+        <MainHeader></MainHeader>
+            <div class="container">
+                <div class="row">
+                    @if (Regex.IsMatch(this.navigate.Uri, "(/Cliente/(Login|Registro)|/Tienda/MostrarPedido|/Cliente/Panel)"))
+                    {
+                        <div class="col-12 mt-4">
+                            @Body
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="col-3 border border-bottom-0 border-top-0 border-start-0 border-end-1 border-dark">
+                            <PanelCategoriasLibros></PanelCategoriasLibros>
+                        </div>
+
+                        <div class="col-9 mt-4">
+                            @Body
+                        </div>
+                    }
+
+                </div>
+            </div>
+    </CascadingValue>
+</CascadingValue>
+            
+
+@code {
+
+    public Cliente? loggedClient { get; set; }
+    public List<Item>? itemsList { get; set; }
+
+
+    protected override void OnInitialized()
+    {
+        /*
+         *
+        MainLayout
+        header <- login button | email acceso a panel
+                                -----------------------------------
+                                \-> storageSvc.RetrieveClientData() si es async no espero, invoco
+
+                                sigo mostrando layout...
+                                (al cabo del tiempo, el storageSvc tiene los datos del cliente logged)
+        ----------
+        \-> DISPARA
+        ¿cómo notifico al servicio Layout que ya tengo los datos? => EVENTOS
+            ==> ejecutamos manejador de eventos q tenemos a la escucha para el mismo tipo de evento
+
+        */
+        // añado manejador de eventos listener que escuche a lo q produce IndexedDBService
+        this.storageSvc.RetrievedClientEvent += RetrieveData;
+
+        //await this.storageSvc.RetrieveClientDataAsync();// <--- para servicio indexedDB...
+        this.storageSvc.RetrieveClientData();
+        this.itemsList = this.storageSvc.RetrieveOrderItems();
+    }
+
+    //metodo listener que se dispara cuando servicio indexedDB recupera los datos
+    // el 1º arg siempre es de tipo object para mapear al issuer del evento
+    // el resto de args dependen de lo q devuelve el evento cuando se provoca
+    private void RetrieveData(object sender, Cliente clientdata)
+    {
+        Console.WriteLine("AYYYYY, alguien ha actualizado los datos del cliente en el servicio y han disparado su evento de notificacion, refresco el layout...");
+        this.loggedClient = clientdata;
+        StateHasChanged();
+    }
+    //con Dispose quitamos de memoria la basura del componente, como suscripciones a observables y manejadores de eventos
+    public void Dispose()
+    {
+        this.storageSvc.RetrievedClientEvent -= RetrieveData!;
+
+    }
+    
+}

@@ -1,0 +1,132 @@
+﻿@using Agapea_Blazor.Client.Models.Services.Interfaces
+@using Agapea_Blazor.Client.Models.Services
+@inherits LayoutComponentBase
+@implements IDisposable
+@inject IStorageService storageSvc
+@inject NavigationManager navigate
+@inject IRestService restSvc
+
+
+<header id="header">
+        <div class="container-lg m-0 p-0">
+        <div class="col-12 vw-100">
+            <div class="row bg-negro m-0 p-0">
+                <div class="row">
+                    <!-- botones de contacto y login/acceso a panel de usuario si esta usuario logueado -->
+                    <div class="col-9"></div>
+                    <div class="col-3">
+
+                        <!-- link acceso al panel Cliente o login en funcion si se le pasa desde el controlador variable de sesion a la vista...-->
+                        <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
+                            <a href="#" class="btn btn-negro btn-sm d-flex flex-row">
+                                <box-icon name='phone' type='solid' color='#8d8585'></box-icon>
+                                <p>Contacto</p>
+                            </a>
+                            <!-- si clientdata es null al login sino al panel cliente-->
+                            @if (this.loggedClient != null)
+                            {
+                                <a onclick="@(()=>this.navigate.NavigateTo("/Cliente/Panel"))" class="btn br-negro btn-sm">
+                                    @this.loggedClient.Credentials.email
+                                </a>
+                            }
+                            else
+                            {
+                                <a onclick="@(()=>this.navigate.NavigateTo("/Cliente/Login"))" class="btn br-negro btn-sm d-flex flex-row">
+                                    <box-icon name='user' type='solid' color='#8d8585'></box-icon>
+                                    <p>Login</p>
+                                </a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <nav class="row bg-light vw-100 m-0 border border-bottom-2">
+                <div class="row p-3 container me-0 ms-5">
+                    <!-- Mi cuenta -->
+                    <div class="col-4 d-flex align-content-center justify-content-center ps-5">
+                        <a class="p-2" onclick="@(()=>this.navigate.NavigateTo("/Tienda/Libros"))">
+                            <img src="/img/agapea-logo.svg" alt="" width="200" height="40" />
+                        </a>
+                    </div>
+                    <div class="col-4">
+                        <form method="post">
+                            <div class="bg-gray border border-5 border w-75 h-100 d-flex flex-row">
+                                <div class="p-1 flex-fill">
+                                    <input class="border-0 w-100 h-100" type="text" name="cajatext" placeholder="Buscar por libro, autor, ISBN..." />
+                                </div>
+                                <div class="bg-primary p-2 border border-5 border-end-0 border-top-0 border-bottom-0">
+                                    <a id="botonBuscar" onclick="javascript:document.forms[0].submit()">
+                                        <box-icon name='search-alt' color='#ffffff'></box-icon>
+                                    </a>
+                                </div>
+                            </div>
+
+                        </form>
+                    </div>
+                    <div class="col-4 p-0">
+                        <div class="w-50 h-100">
+                            <!-- mini carrito -->
+                            <a onclick="@(()=>this.navigate.NavigateTo("/Tienda/MostrarPedido"))" class="h-100 bg-white border border-dark border-1 btn btn-light">
+                                <box-icon name='cart'></box-icon>
+                                <span class="text-dark badge badge-danger  ps-1 pe-1"> <small>Total:</small> <span class="text-end" id="precioCarrito" style="width: 110px; font-size: 1.2em">
+                                    @this.totalCarrito €</span></span>
+                                <box-icon class="align-content-lg-center" name='right-arrow-square' type='solid'></box-icon>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </div>
+</header>
+
+
+@code {
+    public Cliente? loggedClient { get; set; } 
+
+    public List<Item>? itemList { get; set; }
+
+    private Decimal totalCarrito { get; set; } = 0.00m;
+
+    protected override void OnInitialized() 
+    { 
+        this.storageSvc.ModifiedItemsEvent += RetrieveItemsData;
+        this.storageSvc.RetrievedClientEvent += RetrieveClientData;
+    }
+
+    //metodo listener que se dispara cuando se modifica el carrito
+    // el 1º arg siempre es de tipo object para mapear al issuer del evento
+    // el resto de args dependen de lo q devuelve el evento cuando se provoca
+    private void RetrieveItemsData(object sender, List<Item> items)
+    {    
+        this.itemList = items;
+        if (this.itemList != null && this.itemList.Count != 0)
+        {
+            this.totalCarrito = Math.Round((this.itemList.Sum((it) => it.CantidadItem * it.LibroItem.Precio)),2);
+            StateHasChanged();
+        }
+
+    }
+    private void RetrieveClientData(object sender, Cliente client)
+    {
+        this.loggedClient = client;
+        StateHasChanged();
+    }
+    //con Dispose quitamos de memoria la basura del componente, como suscripciones a observables y manejadores de eventos
+    public void Dispose()
+    {
+        this.storageSvc.ModifiedItemsEvent -= RetrieveItemsData;
+        this.storageSvc.RetrievedClientEvent -= RetrieveClientData;
+    }
+
+    // DE ESTE MODO TENDRIA QUE PASAR POR EL COMPONENTE PADRE QUE HACE EL CASCADING NECESARIAMENTE PARA QUE SE REFRESQUE EL CARRITO : 
+    // protected override void OnParametersSet()
+    // {
+    //     if (this.itemList != null && this.itemList.Count != 0)
+    //     {
+    //         this.totalCarrito = Math.Round((this.itemList.Sum((it) => it.CantidadItem * it.LibroItem.Precio)),2);
+    //         StateHasChanged();
+    //     }
+        // }
+
+}

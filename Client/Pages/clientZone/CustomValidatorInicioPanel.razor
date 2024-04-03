@@ -1,0 +1,67 @@
+﻿@inherits ComponentBase
+
+@code {
+
+     /*
+     * como se una en InicioPanel :
+
+        <EditForm EditContext = "formContext" OnValidSubmit="..">
+
+        ...
+        @code{
+            public CustomValidatorCuentaPanel validador {get;set;}
+            ....
+
+            this.validador.ClearErrors();
+
+        }
+
+     * 
+     */
+
+
+    // [Parameter]
+    // public EditContext? formEditContext { get; set; }
+
+    // private Cliente? ClientModel { get; set; }
+    // private ValidationMessageStore _messageStore;
+
+    // protected override void OnInitialized()
+    // {
+    //     this.ClientModel = this.formEditContext.Model;
+    //     this._messageStore = new ValidationMessageStore(this.formEditContext);
+
+    //     //manejadores de evento cuando se solicita validacion de todo el modelo del editcontext o validacion de un campo pq ha habido cambios en el mismo
+    //     this.formEditContext.OnValidationRequested += (s, e) => _messageStore?.Clear();// <- cada vez que se valida el modelo
+    //     this.formEditContext.OnFieldChanged += (s,e) => 
+    //     {
+    //         _messageStore?.Clear(e.FieldIdentifier); // cuando cambia una prop se limpian mensajes de validacion
+
+    //     };
+
+    // }
+
+    // private async Task ValidateField(FieldIdentifier field)
+    // {
+    //     //en funcion del campo asociado a prop del modelo hago una validacion u otra
+
+    //     if (field.FieldName == nameof(this.ClientModel.Credentials.password))
+    //     {
+    //         ValidationContext _passwordContext = new ValidationContext(this.ClientModel.Credentials.password);
+
+    //         string _passwordValue = _passwordContext.PropertyValue;
+
+    //         if (String.IsNullOrEmpty(_passwordValue))
+    //         {
+    //             this._messageStore.Add(_passwordContext, "* La contraseña es obligatoria");
+    //         }
+    //         if (!Regex.IsMatch(_passwordValue, @"^(?=.*\d)(?=.*[\u0021-\u002b\u003c-\u0040])(?=.*[A-Z])(?=.*[a-z])\S{8,}$"))
+    //         {
+    //             this._messageStore.Add("* La contrasela debe contener MAYUS MINUS digito y caracter especial");
+    //         }
+
+    //     }
+
+    //     return Task.CompletedTask;
+    // }
+}

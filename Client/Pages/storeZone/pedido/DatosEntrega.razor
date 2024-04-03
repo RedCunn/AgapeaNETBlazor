@@ -1,0 +1,275 @@
+﻿@using Agapea_Blazor.Client.Models.Services.Interfaces
+@inject IRestService restSvc
+@inject IJSRuntime jsSvc
+
+<div class="d-flex flex-row mt-3">
+    <box-icon name='notepad' color='#f13939' class="me-4"></box-icon>
+    <h4 class="pe-2">1. - Datos de entrega</h4>
+</div>
+<!-- ...columna para direcciones de envio, facturacio y pago ...-->
+<div class="row g-3 mt-3">
+
+    @* -- filas de radios para seleccionar direccion principal de envio del cliente u otra nueva... -- *@
+
+    <div class="col-12">
+        <input class="form-check-input" type="radio" name="direccionradios" id="direccionprincipal" value="direccionprincipal" checked 
+        onchange="@(()=>{this._checkedPrincipAddr = true; this._orderData.TipoDireccionEnvio = "principal";})"/>
+         
+            @if (this._mainAddr != null)
+            {
+            <label>@_mainAddr.Calle , @_mainAddr.MunicipioDirec.DMUN50, @_mainAddr.ProvinciaDirec.PRO, @_mainAddr.CP @_mainAddr.Pais</label>
+            }
+            else
+            {
+            <label>No has añadido direcciones.</label>
+            }
+            
+    </div>
+    @if (this.loggedClient != null)
+    {
+        <div class="col-12">
+            <input class="form-check-input" type="radio" name="direccionradios" id="direccionotra" value="otradireccion"
+                   onchange="@(()=>{this._checkedPrincipAddr = false;this._orderData.TipoDireccionEnvio="otra";})" />
+            <label class="form-check-label" for="direccionotra">
+                Recibir en otra direccion
+            </label>
+        </div>
+    }
+    @* -- filas de campos para nueva direccion envio solo si esta chequeado RADIO OTRA DIRECCION-- *@
+    @if (!this._checkedPrincipAddr || this.loggedClient == null)
+    {
+        <div id="filadireccioncontainer">
+            <div id="direccioncontainer" class="container">
+                <div class="row my-2">
+                    <div class="col-6">
+                        <label for="selectPais" class="form-label small">País *</label>
+                        <select class="form-control custom-bg-gray"
+                        id="selectPais" name="pais">
+                            <option value="-1" selected>- Seleccionar país -</option>
+                            <option value="1-Spain">España</option>
+                        </select>
+                    </div>
+
+                    @*NO LO PILLA ASI : 
+                    value="@this._provinciaselect" @bind:event="onchange" @onchange="this.changeProvincia"*@
+                    <div class="col-6">
+                        <label for="inputProvincia" class="form-label small">Provincia *</label>
+                        <select @bind="@this._provinciaselect" @oninput="this.changeProvincia" 
+                            class="form-control custom-bg-gray"id="inputProvincia" name="provincia">
+                            <option value="-1" selected>- Seleccionar provincia -</option>
+                            @foreach(Provincia pro in this.ProvinciasList)
+                            {
+                                <option value="@String.Concat(pro.CPRO,"-",pro.PRO)" >@pro.PRO</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="row my-2">
+                    <div class="col">
+                        <label for="inputCalle" class="form-label small"> Direccion completa *</label>
+                        <input type="text" class="form-control" id="inputCalle" placeholder="Mi Direccion" name="calle" 
+                        @bind="this._orderData.DireccionEnvio.Calle"/>
+                    </div>
+                    <div class="col-md-auto">
+                        <label for="inputCP" class="form-label small">Codigo Postal *</label>
+                        <input type="text" class="form-control" id="inputCP" placeholder="Codigo Postal: 28803" name="cp" 
+                        @bind="this._orderData.DireccionEnvio.CP"/>
+                    </div>
+                    <div class="col-4">
+                        <label for="inputMunicipio" class="form-label small">Municipio *</label>
+                        <select id="inputMunicipio" class="form-select" name="municipio" 
+                        disabled = "@(this.MunicipiosList.Count == 0)"
+                        @bind="@this._municipioselect" @oninput="this.changeMunicipio">
+                            <option value="-1" selected> - Selecciona un Municipio -</option>
+                            @foreach (Municipio unamun in this.MunicipiosList)
+                            {
+                                <option value="@String.Concat(unamun.CMUM,"-",unamun.DMUN50)">@unamun.DMUN50</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    }
+    
+    <div class="col-12">
+        <label>
+            <input disabled type="radio" id="inputRecogerEnTienda" name="opcionEnvio" value="recoger" /> Recoger en librería Agapea <span style="color:green">SIN GASTOS</span> (<span style="color:red">Seleccione una provincia</span>)
+        </label>
+    </div>
+    <div class="col-12">
+        <label>
+            <input checked type="radio" id="inputEnvioDomicilio" name="opcionEnvio" value="domicilio" /> Envío a domicilio 🏠
+        </label>
+    </div>
+
+    @* -- fila de radios para seleccionar datos de contacto persona de envio  -- *@
+    @if (this.loggedClient != null)
+    {
+        <div class="col-12">
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="personaenvioradios" id="clienteloggedenvio" value="clienteloggedenvio" checked
+                       onchange="@(()=>{this._checkedLoggedClientDelivery = true;})" />
+                <label class="form-check-label" for="clienteloggedenvio">
+                    Datos de usuario registrado
+                    @this.loggedClient.Credentials.email (@this.loggedClient.Credentials.login)
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="personaenvioradios" id="otrapersonaenvio" value="otrapersonaenvio"
+                       onchange="@(()=>{this._checkedLoggedClientDelivery = false;})" />
+                <label class="form-check-label" for="otrapersonaenvio">
+                    Usar otros datos
+                </label>
+            </div>
+        </div>
+
+    }
+    
+    @* -- fila de campos para datos de persona de envio -- *@
+    @if (!this._checkedLoggedClientDelivery || this.loggedClient == null)
+    {
+
+        <div id="containerotrosdatoscliente" class="container">
+            <div class="row">
+                <div class="col-6">
+                    <label for="inputNombre" class="form-label small">Nombre *</label>
+                    <input type="text"
+                    class="form-control custom-bg-gray"
+                    id="inputNombre"
+                    name="nombreEnvio" />
+                </div>
+                <div class="col-6">
+                    <label for="inputApellidos" class="form-label small">Apellidos *</label>
+                    <input type="text"
+                    class="form-control custom-bg-gray"
+                    id="inputApellidos"
+                    name="apellidosEnvio" />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-6">
+                    <label for="inputCorreo" class="form-label small">Correo electrónico *</label>
+                    <input type="text"
+                    class="form-control custom-bg-gray"
+                    id="inputCorreo"
+                    name="emailEnvio" />
+                </div>
+                <div class="col-6">
+                    <label for="telefonoContacto" class="form-label small">Teléfono de contacto *</label>
+                    <input type="text"
+                    class="form-control custom-bg-gray"
+                    id="telefonoContacto"
+                    name="telefonoContacto" />
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div id="filacontainerdatospersonaenvio">
+
+            <div id="containerdatosclientelogged" class="container">
+                <div class="col-6">
+                    <label for="telefonoContacto" class="form-label small">Teléfono de contacto *</label>
+                    <input type="text"
+                           class="form-control custom-bg-gray"
+                           id="telefonoContacto"
+                           name="telefonoContacto" />
+                </div>
+            </div>
+        </div>
+    }
+
+    <div class='col-12'>
+        <label for="otrosDatos" class="form-label small">Otros datos de entrega <small>(Máx. 50 caracteres)</small></label>
+        <input type="text" class="form-control" id="otrosDatos" name="otrosdatos" />
+    </div>
+
+    <div class="col-12 mt-3">
+        <input type="checkbox" id="checkfactura" @onchange="@(async (ChangeEventArgs ev)=>await this.ToggleFacturaEvent.InvokeAsync((bool)ev.Value))" />
+        <label for="checkfactura">Deseo factura</label>
+    </div>
+</div>
+
+@code {
+    [CascadingParameter(Name ="loggedClient")]
+    public Cliente? loggedClient { get; set; }
+
+    [CascadingParameter(Name = "ProvinciasList")]
+    public List<Provincia> ProvinciasList { get; set; }
+
+    [CascadingParameter(Name = "OrderFormEditContext")]
+    public EditContext orderFormEditContext { get; set; }
+
+    private List<Municipio> MunicipiosList { get; set; } = new List<Municipio>();
+
+
+    [Parameter]
+    public EventCallback<bool> ToggleFacturaEvent { get; set; } = new EventCallback<bool>();
+
+    private bool _checkedPrincipAddr { get; set; } = true;
+    private bool _checkedLoggedClientDelivery { get; set; } = true;
+    private Direccion _mainAddr;
+    private OrderModel _orderData {get;set;}
+
+    //-- vars aux para hacer el bind con el value de los selects :
+    private string _provinciaselect { get; set; } = "-1";
+    private string _municipioselect { get; set; } = "-1";
+
+    protected override void OnInitialized()
+    {
+        this._orderData = this.orderFormEditContext.Model as OrderModel;
+    }
+
+    protected override void OnParametersSet()
+    {
+        if (this.loggedClient != null)
+        {
+            if (this.loggedClient.DireccionesCliente.Count > 0)
+                this._mainAddr = this.loggedClient.DireccionesCliente.Where(dir => dir.EsPrincipal == true).Single<Direccion>();
+        }
+
+    }
+
+    protected async Task changeProvincia(ChangeEventArgs ev)
+    {
+        await this.jsSvc.InvokeVoidAsync("console.log","provincia seleccionada ahora ....", ev.Value.ToString());
+        this._municipioselect = ev.Value.ToString();
+
+        if (ev.Value.ToString() != "-1")
+        {
+            this._provinciaselect = ev.Value.ToString();
+            this._orderData.DireccionEnvio.ProvinciaDirec = new Provincia
+                {
+                    CCOM = "",
+                    CPRO = ev.Value.ToString().Split("-")[0] ?? "",
+                    PRO = ev.Value.ToString().Split("-")[1] ?? ""
+                };
+
+                //CARGAR MUNICIPIOS.................
+                this.MunicipiosList = await this.restSvc.RetrieveMunicipios(ev.Value.ToString().Split("-")[0]);
+
+
+        }
+    }
+    protected async Task changeMunicipio(ChangeEventArgs ev)
+    {
+        await this.jsSvc.InvokeVoidAsync("console.log", "municipa seleccionada ahora ....", ev.Value.ToString());
+        this._municipioselect = ev.Value.ToString();
+
+        if (ev.Value.ToString() != "-1")
+        {
+            this._municipioselect = ev.Value.ToString();
+            this._orderData.DireccionEnvio.MunicipioDirec = new Municipio
+                {
+                    CUN = "",
+                    CPRO = this._provinciaselect.Split("-")[0],
+                    CMUM = ev.Value.ToString().Split("-")[0] ?? "",
+                    DMUN50 = ev.Value.ToString().Split("-")[1] ?? ""
+                };
+        }
+    }
+}

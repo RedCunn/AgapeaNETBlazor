@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\Agapea_Blazor.Server.props" />
+</Project>

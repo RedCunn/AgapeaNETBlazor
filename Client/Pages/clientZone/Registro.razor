@@ -1,0 +1,113 @@
+﻿@page "/Cliente/Registro"
+@using Agapea_Blazor.Client.Models.Services.Interfaces
+@inject IJSRuntime jsService
+@inject IRestService restService
+@inject NavigationManager navigate 
+
+<div class="container mt-5">
+    <EditForm Model="newClient" OnValidSubmit="SignupClient">
+        <DataAnnotationsValidator></DataAnnotationsValidator>
+        <h2>👾👾👾👾👾👾👾👾👾👾👾👾👾👹👾👾👾👾👾👾👾👾👾👾👾👾👾👾</h2>
+        <div class="row">
+            <a><img class="w-25" src="img/logo-agapea.jpg" /></a>
+        </div>
+        <h3>Registrando con Registranda</h3>
+        <div class="row">
+            <div class="col-6">
+                <label for="inputEmail" class="form-label small">Correo electrónico</label>
+                <input type="email"
+                       class="form-control custom-bg-gray"
+                @bind-value="newClient.Credentials.email"
+                       id="inputEmail"
+                       placeholder="mail@mail.com" />
+                <ValidationMessage For="@(()=>newClient.Credentials.email)"></ValidationMessage>
+
+            </div>
+            <div class="col-6">
+                <label for="inputRepEmail" class="form-label small">Repetir correo electrónico</label>
+                <input type="email" class="form-control custom-bg-gray" name="repemail" id="inputRepEmail" placeholder="mail@mail.com" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-6">
+                <label for="inputPassword" class="form-label small">Contraseña</label>
+                <input type="password" @bind-value="newClient.Credentials.password" class="form-control custom-bg-gray" id="inputPassword" placeholder="Mi contraseña" />
+                <ValidationMessage For="@(()=>newClient.Credentials.password)"></ValidationMessage>
+            </div>
+            <div class="col-6">
+                <label for="inputRepPassword" class="form-label small">Repite contraseña</label>
+                <input type="password" class="form-control custom-bg-gray" name="reppassword" id="inputRepPassword" placeholder="Repite contraseña" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-6">
+                <label for="inputName" class="form-label small">Nombre</label>
+                <input type="text" @bind-value="newClient.Nombre" class="form-control custom-bg-gray" id="inputName" placeholder="Mi nombre" />
+                <ValidationMessage For="@(()=>newClient.Nombre)"></ValidationMessage>
+            </div>
+            <div class="col-6">
+                <label for="inputLastname" class="form-label small">Apellidos</label>
+                <input type="text" @bind-value="newClient.Apellidos" class="form-control custom-bg-gray" id="inputLastname" placeholder="Mis apellidos" />
+                <ValidationMessage For="@(()=>newClient.Apellidos)"></ValidationMessage>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-6">
+                <label for="inputUsername" class="form-label small">Usuarie</label>
+                <input type="text" name="username" @bind-value="newClient.Credentials.login" class="form-control custom-bg-gray" id="inputUsername" placeholder="Mi usuarie" />
+            </div>
+            <div class="col-6">
+                <label for="inputPhone" class="form-label small">Teléfono <i>(opcional)</i></label>
+                <input type="text" @bind-value="newClient.Telefono" class="form-control custom-bg-gray" id="inputPhone" placeholder="Mi teléfono (opcional)" />
+                <ValidationMessage For="@(()=>newClient.Telefono)"></ValidationMessage>
+            </div>
+        </div>
+        
+        <div class="col-12">
+            <div class="form-check mt-4">
+                <input type="checkbox" id="checkReceiveInfo" class="form-check-input custom-bg-gray" />
+                <label for="checkReceiveInfo" class="form-check-label small">Deseo recibir información sobre libros, novedades y eventos en Agapea.com o sus librerías.</label>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="form-check mt-4">
+                <input type="checkbox" id="checkTerms" class="form-check-input custom-bg-gray" name="condUso" value="true" />
+                <label for="checkTerms" class="form-check-label small">Acepto las Condiciones de uso, y nuestra política de Cookies</label>
+            </div>
+        </div>
+        <div class="col-12">
+            <button type="submit" class="btn btn-primary mt-4">Registrarme</button>
+        </div>
+    </EditForm>
+</div>
+
+
+@code {
+    #region ... PROPS 
+    public Cliente newClient { get; set; } = new Cliente();
+    #endregion
+
+    #region ... METODOS
+
+    public async Task SignupClient()
+    {
+        //necesito pasar por AJAX los datos del client al servicio RESTFUL montado en el server asp.net core
+        await jsService.InvokeVoidAsync("console.log", newClient);
+        RestMessage _resp = await this.restService.SignupClient(newClient);
+
+        await jsService.InvokeVoidAsync("console.log", _resp);
+
+        if (_resp.Code == 0)
+        {
+            //redirecto registroOK para que cliente revise su email y active cuenta 
+            this.navigate.NavigateTo("/Cliente/RegistroOK");
+        }
+        else
+        {
+            //mostrar mensaje de error en la vista del componente 
+        }
+    }
+
+    #endregion
+
+}

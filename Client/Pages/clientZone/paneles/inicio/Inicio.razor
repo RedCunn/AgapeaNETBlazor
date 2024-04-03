@@ -1,0 +1,411 @@
+﻿@using Agapea_Blazor.Client.Models.Services.Interfaces
+@using Agapea_Blazor.Client.Models.Services
+@inject IStorageService storageSvc
+@inject IRestService restSvc
+@inject IJSRuntime jsSvc
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h2>Mi perfil</h2>
+            <div></div><!--sangria-->
+            <div class="alert alert-secondary" data-bs-toggle="collapse" href="#collapseDatos">Datos de perfil</div>
+            <div class="collapse" id="collapseDatos">
+
+                <EditForm EditContext="this.formContext" OnSubmit="this.UpdateClientData">
+                    <!-- si lo haces asi intentara validar la password, y no quiero q sea campo obligatorio...provoco validacion desde codigo
+                    <DataAnnotationsValidator></DataAnnotationsValidator>
+                    <ValidationSummary style="color:red"></ValidationSummary>
+                     -->
+                    <!-- mi validationsummary...-->
+                    @if(this.ValidationErrors.Count > 0){
+                        <div class="row">
+                            <ul>
+                                @foreach(String item in this.ValidationErrors){
+                                    <li><span style="color:red">@item</span></li>
+                                }
+                            </ul>
+                        </div>
+                    }
+
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="row text-muted">Correo electrónico</div>
+                            <div class="row"><input type="text" id="inputEmail" class="input-group-text" style="width:90%" @bind="@this.loggedClient!.Credentials.email" /></div>
+                            <div class="row text-muted">Contraseña</div>
+                            <div class="row"><input type="password" id="inputPass" class="input-group-text" style="width:90%" @bind="@this.loggedClient.Credentials.password" /></div>
+                            <div class="row text-muted">Nombre</div>
+                            <div class="row"><input type="text" id="inputNombre" class="input-group-text" style="width:90%" @bind="@this.loggedClient.Nombre" /></div>
+
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="row text-muted">Teléfono</div>
+                            <div class="row"><input type="text" id="inputTlfn" class="input-group-text" style="width:90%" @bind="@this.loggedClient.Telefono" /></div>
+                            <div class="row text-muted">Repetir la contraseña</div>
+                            <div class="row"><input type="password" id="inputPassRep" class="input-group-text" style="width:90%" /></div>
+                            <div class="row text-muted">Apellidos</div>
+                            <div class="row"><input type="text" id="inputApellidos" class="input-group-text" style="width:90% " @bind="@this.loggedClient.Apellidos" /></div>
+
+                        </div>
+                    </div>
+                    <div class="row"><span></span></div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="text-muted">Foto</div>
+                            <div id="avatarPerfil" class="card" style="width:200px;height:250px; background-color:aliceblue" 
+                            onclick="javascript:document.getElementById('selectorImagen').dispatchEvent(new MouseEvent('click'))">
+                                <InputFile accept="image/*" id="selectorImagen" name="imagen" style="visibility: hidden;" OnChange="PrevisualizarImagen"/>
+                                <!-- $('#selectorImagen').click()" -->
+                                <!-- si en el src quieres usar el nombre del fihcero src="https://localhost:7152/images/uploads_imags/(arroba)this.clienteLogged.ImagenCuenta"-->
+                                <img id="imagenUsuario" style="height:250px; width:200px;" src="@(this.imgSrc != "" ? this.imgSrc : "/img/blank-profile-picture-973460_960_720.webp" )" />
+                            </div>
+                            @if(!String.IsNullOrEmpty(this.MessageUploadImgServer)){
+                                <div id="mensajeServer"><span style=@(this.MessageUploadImgServer.Contains("OK") ? "color:green" : "color:red")>@this.MessageUploadImgServer</span></div>
+                            }
+                            <button type="button" class="btn btn-link btn-sm" disabled="@this.btnUploadImgDisabled" @onclick="@this.UploadImagen">+ Sube una foto</button>
+                            <div id="mensajeServicioREST"></div>
+                        </div>
+                        <div class="col-sm-8">
+                            <div class="row text-muted">Usuario</div>
+                            <div class="row"><input type="text" id="inputUsuario" class="input-group-sm" @bind="@this.loggedClient.Credentials.login" /></div>
+                            <div class="row text-muted">Genero</div>
+                            <div class="row">
+                                <select class="form-select" aria-label="Elige genero" @bind="@this.loggedClient.Genero">
+                                    <option selected>Elige genero</option>
+
+                                    <option value="Hombre">Hombre</option>
+                                    <option value="Mujer">Mujer</option>
+                                </select>
+                            </div>
+                            <div class="row text-muted">Fecha de nacimiento</div>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <select name="dia" id="dia" class="form-select">
+                                        <option>Elige día</option>
+                                        @for (int a = 1; a <= 31; a++)
+                                        {
+                                            <option value="@a">@a</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="col-sm-4">
+                                    <select name="mes" id="mes" class="form-select">
+                                        <option>Elige mes</option>
+                                        @foreach (KeyValuePair<String, String> elemento in this.meses)
+                                        {
+                                            <option value="@elemento.Key">@elemento.Value</option>
+                                        }
+
+                                    </select>
+                                </div>
+                                <div class="col-sm-4">
+                                    <select name="anio" id="anio" class="form-select">
+                                        <option value="" selected="">Elige año</option>
+                                        @for (int a = this.year; a >= (this.year - 120); a--)
+                                        {
+                                            <option value="@a">@a</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row text-muted">Descripcion</div>
+                            <div class="row"><textarea id="textArea" @bind="@this.loggedClient.Descripcion">@this.loggedClient.Descripcion</textarea> </div>
+                            <div class="row">
+                                <div class="col-6 ro2 align-text-top"><a href=""> Darme de baja</a></div>
+                                <div class="col-6">
+                                    <button type="submit" id="btnSubmitCliente" class="btn btn-primary btn-sm">Guardar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @if (!String.IsNullOrEmpty(this.MessageUpdateClientData))
+                    {
+                        <div class="row"><span style=@(this.MessageUpdateClientData.Contains("OK") ? "color:green": "color:red")>@this.MessageUpdateClientData</span></div>
+                    }
+                </EditForm>
+
+            </div>
+
+            <div class="alert alert-secondary" data-bs-toggle="collapse" href="#collapseDirecciones">Direcciones</div>
+            <div class="collapse" id="collapseDirecciones">
+                <div>
+                    <p> Guarda todas tus direcciones de envío y elige la que usarás por defecto donde llegarán tus pedidos.</p>
+
+                    <p>
+                        Estas son las direcciones a las que puedes hacer tus envíos. Las direcciones de envío serán las que elijas mientras que la
+                        facturación será la misma en todas las direcciones:
+                    </p>
+                </div>
+
+                <hr />
+                <!-- lista de direcciones del cliente -->
+                <div class="container">
+                    @foreach (Direccion unadirec in this.loggedClient.DireccionesCliente)
+                    {
+                        <MiniDireccion direc="@unadirec"
+                                       RemoveAddressEvent="@((Direccion dir)=>OperarDireccion(dir, "remove"))"
+                                       ModidyAddressEvent="@((Direccion dir)=> OperarDireccion(dir, "pending-modify"))"></MiniDireccion>
+                    }
+                </div>
+
+                <!-- Button trigger modal -->
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                    + Nueva Direccion
+                </button>
+
+                <!-- Modal -->
+                <FormModalDirecciones @ref="@modalDirecciones"
+                 CreateModifyEvent="@((Dictionary<Direccion, string> data)=> this.OperarDireccion(data.Keys.ToArray<Direccion>()[0], data.Values.ToArray<string>()[0]))">
+                </FormModalDirecciones>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@code {
+
+    public Cliente? loggedClient { get; set; }
+    public Cliente? clientToEdit { get; set; }
+
+    public EditContext? formContext { get; set; }
+
+    public FormModalDirecciones modalDirecciones { get; set; } = new FormModalDirecciones { direccionEd = new Direccion(), operacion = "create" };
+
+    private String imgSrc { get; set; } = "";
+    private String MessageUploadImgServer { get; set; } = "";
+    private bool btnUploadImgDisabled { get; set; } = true;
+
+    private String MessageUpdateClientData { get; set; } = "";
+    private String reppassword { get; set; } = "";
+    private List<String> ValidationErrors { get; set; } = new List<String>();
+
+    private DateTime datenow { get; set; }  
+    private int year { get; set; }
+
+    public Dictionary<string, string> meses = new Dictionary<String, String>()
+                                {
+                                    { "01", "Enero"},
+                                    { "02", "Febrero"},
+                                    { "03", "Marzo"},
+                                    { "04", "Abril"},
+                                    { "05", "Mayo"},
+                                    { "06", "Junio"},
+                                    { "07", "Julio"},
+                                    { "08", "Agosto"},
+                                    { "09", "Septiembre"},
+                                    { "10", "Octubre"},
+                                    { "11", "Noviembre"},
+                                    { "12", "Diciembre"}
+                                };
+
+    protected override void OnInitialized()
+    {
+        this.datenow = DateTime.Now;
+        this.year = this.datenow.Year;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        this.loggedClient = this.storageSvc.RetrieveClientData();
+        await this.jsSvc.InvokeVoidAsync("console.log", "CLIENTE EN PANEL ::: ",this.loggedClient);
+
+        // this.loggedClient = new Cliente()
+        // {
+        //     IdCliente = this.clientToEdit.IdCliente,
+        //     Credentials = new Cuenta ()
+        //     {
+        //         email = this.clientToEdit.Credentials.email,
+        //         password = this.clientToEdit.Credentials.password,
+        //         login = this.clientToEdit.Credentials.login,
+        //         accountPic = this.clientToEdit.Credentials.accountPic
+        //     },
+        //     Nombre = this.clientToEdit.Nombre,
+        //     Apellidos = this.clientToEdit.Apellidos,
+        //     FechaNacimiento = this.clientToEdit.FechaNacimiento,
+        //     Telefono = this.clientToEdit.Telefono,
+        //     Genero = this.clientToEdit.Genero,
+        //     Descripcion = this.clientToEdit.Descripcion,
+        //     DireccionesCliente = this.clientToEdit.DireccionesCliente.ToList<Direccion>(),
+        //     PedidosCliente = this.clientToEdit.PedidosCliente.ToList<Pedido>()
+
+        // };
+
+        if (this.loggedClient?.Credentials.accountPic != "")
+        {
+            this.imgSrc = this.loggedClient!.Credentials.accountPic;
+        }
+
+        this.formContext = new EditContext(this.loggedClient);
+        this.formContext.EnableDataAnnotationsValidation();
+    }
+
+
+    #region /////////// metodos componente para modificar datos personales usuario //////////
+    public async Task UpdateClientData()
+    {
+        // ------- validaciones del modelo --------------------------------
+        this.ValidationErrors.Clear();
+
+        bool _resvalid = this.formContext.Validate();
+        if (this.loggedClient.Credentials.password == this.reppassword)
+        {
+            if (!_resvalid)
+            {
+                this.ValidationErrors = this.formContext.GetValidationMessages().ToList<String>();
+
+                //¿hay errores en props.del modelo cliente q no son la password? directamente mostramos..sino vemos si la password esta rellanada o no, sino esta rellenada no hacemos caso a errores
+                bool _errorDifPass = this.ValidationErrors.Any((String mensaje) => !mensaje.Contains("Contraseña"));
+                if (_errorDifPass || !String.IsNullOrEmpty(this.loggedClient.Credentials.password))
+                {
+                    return;
+                }
+            }
+        }
+        else
+        {
+            this.ValidationErrors.Add("* Las contraseñas no coinciden");
+            return;
+        }
+
+        // ------------- pet. para modificar datos del cliente -------------
+        this.ValidationErrors.Clear();
+
+
+        RestMessage _resp = await this.restSvc.UpdateClientData(this.loggedClient);
+        if (_resp.Code == 0)
+        {
+            this.MessageUpdateClientData = _resp.Message;
+
+            //refresco los datos del cliente, pq tiene nueva imagen...
+            this.storageSvc.StoreClientData(_resp.ClientData);
+            this.storageSvc.StoreJWT(_resp.SessionToken);
+
+            StateHasChanged();
+            //para q los posibles nuevos datos aparezcan en el panel lateral disparo evento del servicio storage, q intercepta el listener q esta en el mainlayout, y asi refrescara panel...
+            (this.storageSvc as SubjectStorageService).TriggerRefreshingClientDataEvent(_resp.ClientData);
+
+        }
+        else
+        {
+            //mostrar mensajes de error en div debajo del boton +Subir Foto...
+            this.MessageUpdateClientData = String.Concat(_resp.Message, Environment.NewLine, _resp.Error);
+        }
+
+    }
+
+    public async Task PrevisualizarImagen(InputFileChangeEventArgs ev)
+    {
+        IBrowserFile _fichimagen = ev.File;
+        //tengo q leer el contenido del fichero imagen seleccionado como un array de bytes
+        //y pasar ese array de bytes a base64 y mostrarlo en el src del elemento <img src="...">
+        //en formato "data: image/tipo;base64, ..."
+        byte[] _contfich = new byte[_fichimagen.Size];
+        await _fichimagen.OpenReadStream().ReadAsync(_contfich);
+
+        this.imgSrc = $"data:{_fichimagen.ContentType};base64, {Convert.ToBase64String(_contfich)}";
+        this.btnUploadImgDisabled = false;
+
+    }
+
+    public async Task UploadImagen()
+    {
+        //tengo q subir al servidor la imagen avatar del usuario...
+        RestMessage _resp = await this.restSvc.UploadImage(this.imgSrc, this.loggedClient.IdCliente);
+        if (_resp.Code == 0)
+        {
+            //refresco los datos del cliente, pq tiene nueva imagen...
+            this.storageSvc.StoreClientData(_resp.ClientData);
+            this.storageSvc.StoreJWT(_resp.SessionToken);
+            this.btnUploadImgDisabled = true;
+            this.MessageUploadImgServer = _resp.Message;
+
+            //para q imagen recien subida aparezca en el panel lateral disparo evento del servicio storage, q intercepta el listener q esta en el mainlayout, y asi refrescara panel...
+            (this.storageSvc as SubjectStorageService).TriggerRefreshingClientDataEvent(_resp.ClientData);
+
+        }
+        else
+        {
+            //mostrar mensajes de error en div debajo del boton +Subir Foto... aunque ya lo hago en la vista viendo si el mensaje de respuesta contiene o no "OK"
+        }
+    }
+    #endregion
+
+    #region /////////// metodos componente para manejar direcciones usuario ///////////
+
+    public async Task OperarDireccion(Direccion direc, String operacion)
+    {
+        RestMessage _resp = new RestMessage();
+
+        switch (operacion)
+        {
+            case "pending-modify":
+                //mostrar el popup de crear direccion con los datos de la direccion a modificar
+                this.modalDirecciones.direccionEd = direc;
+                this.modalDirecciones.operacion = "modify";
+                await this.jsSvc.InvokeVoidAsync("window.adminFormModal.ShowModal", "staticBackdrop");
+                break;
+
+            case "create":
+                direc.IdCliente = this.loggedClient.IdCliente;
+
+                _resp = await this.restSvc.OperateAddress(direc, operacion);
+                if (_resp.Code == 0)
+                {
+                    this.loggedClient = _resp.ClientData;
+                    this.storageSvc.StoreClientData(_resp.ClientData);
+                    this.storageSvc.StoreJWT(_resp.SessionToken);
+
+                    StateHasChanged();
+                }
+                else
+                {
+                    //mostrar en vista mensaje de error al crear direccion
+                    await this.jsSvc.InvokeVoidAsync("console.log", _resp.Error);
+                }
+                break;
+            case "modify":
+                direc.IdCliente = this.loggedClient.IdCliente;
+
+                _resp = await this.restSvc.OperateAddress(direc, operacion);
+                if (_resp.Code == 0)
+                {
+                    this.loggedClient = _resp.ClientData;
+                    this.storageSvc.StoreClientData(_resp.ClientData);
+                    this.storageSvc.StoreJWT(_resp.SessionToken);
+
+                    StateHasChanged();
+                }
+                else
+                {
+                    //mostrar en vista mensaje de error al crear direccion
+                    await this.jsSvc.InvokeVoidAsync("console.log", _resp.Error);
+                }
+                break;
+            case "remove":
+                direc.IdCliente = this.loggedClient.IdCliente;
+
+                _resp = await this.restSvc.OperateAddress(direc, operacion);
+                if (_resp.Code == 0)
+                {
+                    this.loggedClient = _resp.ClientData;
+                    this.storageSvc.StoreClientData(_resp.ClientData);
+                    this.storageSvc.StoreJWT(_resp.SessionToken);
+
+                    StateHasChanged();
+                }
+                else
+                {
+                    //mostrar en vista mensaje de error al eliminar direccion
+                    await this.jsSvc.InvokeVoidAsync("console.log", _resp.Error);
+                }
+
+                break;
+        }
+    }
+
+    #endregion
+}

@@ -1,0 +1,121 @@
+﻿@using Agapea_Blazor.Client.Models.Services.Interfaces
+@inject IRestService restSvc
+@inject IJSRuntime jsSvc
+
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Nueva Direccion</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="container">
+
+                    <div class="row">
+                        <p>Si desea que enviemos el pedido a una dirección distinta de la de facturación, modifique los campos a </p>
+                        <p>continuación según proceda.</p>
+                    </div>
+                    <div class="row">
+                        <!-- formulario de alta de direcciones -->
+                        <EditForm class="row g-3" Model="this.direccionEd" OnValidSubmit="this.CreateModifyAddress">
+
+                            <div class="col-12">
+                                <label for="inputDireccion" class="form-label">Direccion de Envio:</label>
+                                <input type="text" class="form-control" id="inputDireccion" @bind="@this.direccionEd.Calle" placeholder="Mi Direccion">
+                            </div>
+
+                            <div class="col-6">
+                                <label for="inputCP" class="form-label">Codigo Postal:</label>
+                                <input type="text" class="form-control" id="inputCP" @bind="@this.direccionEd.CP" placeholder="Codigo Postal: 28803">
+                            </div>
+                            <div class="col-6">
+                                <label for="inputPais" class="form-label">Pais:</label>
+                                <input type="text" class="form-control" id="inputPais" @bind="@this.direccionEd.Pais" placeholder="España">
+                            </div>
+
+
+                            <div class="col-6">
+                                <label for="inputProvincia" class="form-label">Provincia:</label>
+                                <InputSelect id="inputProvincia" class="form-select" @bind-Value="this.provincia" @oninput="@this.RecuperaMunicipios">
+                                    <option value="0" selected> - Seleccionar Provincia - </option>
+                                    @{
+                                        foreach (Provincia unaprov in this.listaprovincias)
+                                        {
+                                            <option value="@unaprov.CPRO-@unaprov.PRO">@unaprov.PRO</option>
+                                        }
+                                    }
+                                </InputSelect>
+                            </div>
+                            <div class="col-6">
+                                <label for="inputMunicipio" class="form-label">Municipio:</label>
+                                <InputSelect id="inputMunicipio" class="form-select" @bind-Value="@this.municipio" disabled="@this.disabledMunis">
+                                    <option value="0" selected> - Selecciona un Municipio -</option>
+                                    @foreach (Municipio muni in this.listamunicipios)
+                                    {
+                                        <option value="@muni.CMUM-@muni.DMUN50">@muni.DMUN50</option>
+
+                                    }
+                                </InputSelect>
+                            </div>
+
+                            <input type="hidden" id="inputOperacion" name="operacion" value="crear" />
+                            <hr />
+                            <div class="col-12">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                <button type="submit" class="btn btn-primary" id="btnCrearDireccion">@this.textButtonForm</button>
+                            </div>
+                        </EditForm>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@code {
+    public Direccion direccionEd { get; set; } = new Direccion();
+    public String operacion { get; set; } = "create";
+    public String textButtonForm { get; set; } = "Crear Direccion";
+
+    private bool disabledMunis { get; set; } = true;
+    private String provincia { get; set; } = "0";
+    private String municipio { get; set; } = "0";
+    public List<Provincia> listaprovincias { get; set; } = new List<Provincia>();
+    public List<Municipio> listamunicipios { get; set; } = new List<Municipio>();
+
+    [Parameter]
+    public EventCallback<Dictionary<Direccion, String>> CreateModifyEvent { get; set; } = new EventCallback<Dictionary<Direccion, string>>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        this.listaprovincias = await this.restSvc.RetrieveProvincias();
+    }
+    protected async Task RecuperaMunicipios(ChangeEventArgs ev)
+    {
+        this.disabledMunis = false;
+        this.listamunicipios = await this.restSvc.RetrieveMunicipios(ev.Value.ToString().Split("-")[0]);
+    }
+    public async Task CreateModifyAddress()
+    {
+        if (this.operacion == "pending-modify") this.operacion = "modify";
+        this.direccionEd.ProvinciaDirec = new Provincia
+            {
+                CCOM = "",
+                CPRO = this.provincia.Split("-")[0],
+                PRO = this.provincia.Split("-")[1]
+            };
+        this.direccionEd.MunicipioDirec = new Municipio
+            {
+                CPRO = this.provincia.Split("-")[0],
+                CMUM = this.municipio.Split("-")[0],
+                DMUN50 = this.municipio.Split("-")[1],
+                CUN = ""
+            };
+        await this.CreateModifyEvent.InvokeAsync(new Dictionary<Direccion, string> { { this.direccionEd, this.operacion } });
+        //oculto modal...
+        await this.jsSvc.InvokeVoidAsync("window.adminFormModal.HideModal", "staticBackdrop");
+    }
+}

@@ -1,0 +1,12 @@
+C:\Users\cunns\source\repos\Agapea_Blazor\Shared\bin\Debug\net7.0\Agapea_Blazor.Shared.deps.json
+C:\Users\cunns\source\repos\Agapea_Blazor\Shared\bin\Debug\net7.0\Agapea_Blazor.Shared.dll
+C:\Users\cunns\source\repos\Agapea_Blazor\Shared\bin\Debug\net7.0\Agapea_Blazor.Shared.pdb
+C:\Users\cunns\source\repos\Agapea_Blazor\Shared\obj\Debug\net7.0\Agapea_Blazor.Shared.csproj.AssemblyReference.cache
+C:\Users\cunns\source\repos\Agapea_Blazor\Shared\obj\Debug\net7.0\Agapea_Blazor.Shared.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\cunns\source\repos\Agapea_Blazor\Shared\obj\Debug\net7.0\Agapea_Blazor.Shared.AssemblyInfoInputs.cache
+C:\Users\cunns\source\repos\Agapea_Blazor\Shared\obj\Debug\net7.0\Agapea_Blazor.Shared.AssemblyInfo.cs
+C:\Users\cunns\source\repos\Agapea_Blazor\Shared\obj\Debug\net7.0\Agapea_Blazor.Shared.csproj.CoreCompileInputs.cache
+C:\Users\cunns\source\repos\Agapea_Blazor\Shared\obj\Debug\net7.0\Agapea_Blazor.Shared.dll
+C:\Users\cunns\source\repos\Agapea_Blazor\Shared\obj\Debug\net7.0\refint\Agapea_Blazor.Shared.dll
+C:\Users\cunns\source\repos\Agapea_Blazor\Shared\obj\Debug\net7.0\Agapea_Blazor.Shared.pdb
+C:\Users\cunns\source\repos\Agapea_Blazor\Shared\obj\Debug\net7.0\ref\Agapea_Blazor.Shared.dll

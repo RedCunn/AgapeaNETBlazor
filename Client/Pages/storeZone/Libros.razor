@@ -1,0 +1,42 @@
+﻿@page "/Tienda/Libros/{catID?}"
+@using Agapea_Blazor.Client.Models.Services.Interfaces
+@inject IRestService restSvc
+
+<div class="container">
+
+    @if(this.booksList.Count != 0)
+    {
+
+        <div class="row">
+            @foreach (Libro libro in this.booksList)
+            {
+                <div class="col-4">
+                    <MiniLibro showedBook="@libro"></MiniLibro>
+                </div>
+            }
+
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col">
+                <p>No se han encontrado ejemplares de esta categoria...</p>
+            </div>
+        </div>
+    }
+
+</div>
+
+@code {
+    [Parameter]
+    public String catID { get; set; }//<- param pasado en la url
+
+    public List<Libro> booksList { get; set; } = new List<Libro>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (catID == null) catID = "2-10";
+        this.booksList = await this.restSvc.RetrieveBooks(this.catID);
+    }
+}

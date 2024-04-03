@@ -1,0 +1,112 @@
+﻿<div class="d-flex flex-row mt-3">
+    <box-icon name='credit-card-alt' color='#f13939' class="me-4"></box-icon>
+    <h4 id="txtpago" class="pe-2">@this.tituloPago</h4>
+
+</div>
+<div class="col-12">
+    <input type="checkbox" id="checkCodigoPromo" /> Usar código promocional
+</div>
+<div class="col-12">
+    <label>
+        <input type="radio" id="pagotarjeta" name="pagoradios" value="tarjeta" checked
+        @onchange="HandledPaymentMethod" /> Pago con tarjeta
+    </label>
+</div>
+<div class="col-12">
+    <label>
+        <input type="radio" id="pagopaypal" name="pagoradios" value="paypal"
+        @onchange="HandledPaymentMethod" /> Pago mediante PayPal
+        <box-icon name='paypal' type='logo' color='#73b8ef'></box-icon>
+    </label>
+</div>
+
+@*DATOS DE PAGO CON TARJETA*@
+@if (!this.checkPagoPaypal)
+{
+    <div id="containerPago">
+        <div id="containerDatosPagoConTarjeta" class="container p-3 my-2" style="background-color:#FAFDF0; border-radius:25px">
+            <div class="row">
+                <div class="col-5">
+                    <label for="inputNumero" class="form-label">Numero de la tarjeta *</label>
+                    <input type="text" id="inputNumero" class="form-control" name="numerocard" @bind="this.datosPago.NumeroTarjeta">
+                </div>
+
+                <div class="col-5">
+                    <label class="form-label">Fecha caducidad *</label>
+                    <div class="d-flex flex-row justify-content-start">
+                        <select id="inputAnio" class="form-select" name="aniocard" style="width:fit-content; height:fit-content" @bind="this.datosPago.AnioCaducidad">
+                            @for (int anio = DateTime.Now.Year; anio < DateTime.Now.Year + 10; anio++)
+                            {
+                                <option value="@anio">@anio</option>
+                            }
+                        </select>
+                        <select id="inputMes" class="form-select" name="mescard" style="width:fit-content; height:fit-content" @bind="this.datosPago.MesCaducidad">
+                            @for (int i = 1; i <= 12; i++)
+                            {
+                                <option value="@i">@i</option>
+                            }
+                        </select>
+                    </div>
+
+                </div>
+                <div class="col-2">
+                    <label for="inputCVV" class="form-label">CVV *</label>
+                    <input type="text" class="form-control" id="inputCVV" name="cvv" @bind="this.datosPago.CVV">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <label class="form-label">Nombre del Banco de la tarjeta</label>
+                    <input type="text" id="inputNombreBanco" class="form-control" name="nombrebancocard" @bind="this.datosPago.NombreBanco"/>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col p-4 d-flex flex-row justify-content-start">
+                    <img src="/img/Aceptamos-tarjetas-VISA-MasterCard-y-Maestro.png" style="width:150px; height:30px" />
+                    <p class="mx-2 my-2"><small> Pago Seguro 100% garantizado</small></p>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+@code {
+    [CascadingParameter]
+    public EditContext orderFormEditContext { get; set; }
+
+    [Parameter]
+    public String tituloPago { get; set; }
+
+    public OrderModel datosPago { get; set; }
+
+    private bool checkPagoPaypal { get; set; } = false;
+
+    protected override void OnInitialized()
+    {
+        this.datosPago = this.orderFormEditContext.Model as OrderModel;
+    }
+
+    public void HandledPaymentMethod(ChangeEventArgs ev)
+    {
+        if (ev.Value.ToString() == "tarjeta")
+        {
+            this.checkPagoPaypal = false;
+        }
+
+        if (ev.Value.ToString() == "paypal")
+        {
+            this.checkPagoPaypal = true;
+        }
+
+        if (this.checkPagoPaypal)
+        {
+            this.datosPago.metodoPago = "paypal";
+        }
+        else
+        {
+            this.datosPago.metodoPago = "tarjeta";
+        }
+
+    }
+}

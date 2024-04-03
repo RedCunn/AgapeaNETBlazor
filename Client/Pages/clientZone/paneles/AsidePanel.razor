@@ -1,0 +1,65 @@
+﻿@using Agapea_Blazor.Client.Models.Services.Interfaces
+@implements IDisposable
+@inject NavigationManager navigate
+@inject IStorageService storageSvc
+@inject IJSRuntime jsSvc
+<div class="list-group">
+    <div class="list-group-item d-flex justify-content-center">
+        <img src="@(this.imgSrc != "" ? this.imgSrc : "/img/shelby-login.jpg" )" alt="" width="100" height="100" />
+    </div>
+    <a href="/Cliente/Panel/Inicio"
+       class="list-group-item list-group-item-action border border-end-0 border-start-0 text-dark d-flex flex-row">
+    <box-icon name='home' color='#7b7878'></box-icon>
+        Inicio
+    </a>
+    <a href="/Cliente/Panel/MisCompras"
+       class="list-group-item list-group-item-action border border-end-0 border-start-0 text-dark d-flex flex-row">
+        <box-icon name='shopping-bag' color='#7b7878'></box-icon>
+        Mis Compras
+    </a>
+    <a href="/Cliente/Panel/MisOpiniones"
+       class="list-group-item list-group-item-action border border-end-0 border-start-0 text-dark d-flex flex-row">
+        <box-icon name='conversation' color='#7b7878'></box-icon>
+        Mis Opiniones
+    </a>
+    <a href="/Cliente/Panel/MisListas"
+       class="list-group-item list-group-item-action border border-end-0 border-start-0 text-dark d-flex flex-row">
+        <box-icon name='list-ul' color='#7b7878'></box-icon>
+        Mis Listas
+    </a>
+    <a href="/Cliente/Panel/Recomendador"
+       class="list-group-item list-group-item-action border border-end-0 border-start-0 text-dark d-flex flex-row">
+        <box-icon name='dice-6'></box-icon>
+        Recomendador de libros
+    </a>
+</div>
+
+@code {
+    public Cliente loggedClient { get; set; } = new Cliente();
+    private String imgSrc { get; set; } = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        this.loggedClient = this.storageSvc.RetrieveClientData();
+        await this.jsSvc.InvokeVoidAsync("console.log", "CLIENTE EN ASIDEPANEL ::: ", this.loggedClient);
+
+        if (this.loggedClient?.Credentials.accountPic != "")
+        {
+            this.imgSrc = this.loggedClient!.Credentials.accountPic;
+        }
+    }
+    protected override void OnInitialized()
+    {
+        this.storageSvc.RetrievedClientEvent += RetrieveClientData;
+    }
+    private void RetrieveClientData(object sender, Cliente client)
+    {
+        this.loggedClient = client;
+        StateHasChanged();
+    }
+    //con Dispose quitamos de memoria la basura del componente, como suscripciones a observables y manejadores de eventos
+    public void Dispose()
+    {
+        this.storageSvc.RetrievedClientEvent -= RetrieveClientData;
+    }
+}

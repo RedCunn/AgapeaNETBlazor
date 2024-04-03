@@ -1,0 +1,215 @@
+﻿@page "/Tienda/MostrarPedido"
+@* si en la url vienen dos params en la querystring con este formato ?idcliente=...&idpedido=...
+    es que ha habido fallo en el pago con paypal , tengo que recuperar de nuevo los datos del pedido y del cliente 
+    y volver a pintar la vista mostrando mensaje de error 
+*@
+@using Agapea_Blazor.Client.Models.Services.Interfaces
+@using Agapea_Blazor.Client.Models.Services
+@using Agapea_Blazor.Client.Pages.storeZone.pedido
+@inject IStorageService storageSvc
+@inject IRestService restSvc
+@inject NavigationManager navigate
+@inject IJSRuntime jsSvc
+
+<div class="container">
+    <div class="row">
+        @if (this.itemList?.Count != 0)
+        {
+            <!--COLS PARA DATOS DEL PEDIDO-->
+            <div class="col-7">
+                <EditForm EditContext="this.orderFormEditContext" OnValidSubmit="this.CompleteOrder">
+                    <CascadingValue Name="OrderFormEditContext" Value="this.orderFormEditContext">
+                        <CascadingValue Name="provinciasList" Value="provinciasList">
+                            <DatosPedido OnValidSubmitChild="this.CompleteOrder"></DatosPedido>
+                        </CascadingValue>
+                    </CascadingValue>
+                </EditForm>
+            </div>
+            
+            <!--COLS PARA ELEMENTOS DEL PEDIDO-->
+            <div class="col-5">
+                <div class="container">
+                    <div class="row">
+                        <div class="col"><h5><strong>Resumen de la cesta</strong></h5></div>
+                    </div>
+                    @foreach (Item it in this.itemList!)
+                    {
+                        <div class="row">
+                            <div class="col">
+                                @if (it.CantidadItem > 0)
+                                {
+                                    <ElementoPedido showedItem="@it" operateItemEvent="@ModifyOrderItem"></ElementoPedido>
+                                }
+                            </div>
+                        </div>
+                    }
+                    <hr />
+                    <div class="row">
+                        <div class="col-10">Subtotal :  </div>
+                        <div class="col-2"><p>@this.subtotal  €</p></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-10">Gastos de envío y gestión : </div>
+                        <div class="col-2"><p> @this.gastosEnvio €</p></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-10"><h5>Total :</h5></div>
+                        <div class="col-2"><p>@this.total €</p></div>
+                    </div>
+                    <div class="row d-flex flex-row justify-content-between">
+                        <div class="col-6">
+                            <a class="btn btn-light btn-sm d-flex flex-row justify-content-between" onclick="@(()=> this.navigate.NavigateTo("/Tienda/Libros"))">
+                                <box-icon name='shopping-bag' color='#2947f1'></box-icon>
+                                Seguir comprando
+                            </a>
+                        </div>
+                        <div class="col-6">
+                            <a class="btn btn-light btn-sm d-flex flex-row justify-content-between">
+                                <box-icon name='truck' type='solid' color='#ffffff'></box-icon>
+                                Finalizar pedido
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>   
+        }
+        else
+        {
+            <div class="d-flex justify-content-center">
+                <h3 style="color : blue">No hay artículos en la cesta</h3>
+                <a href="/Tienda/Libros" style="color : blue"><h4>Volver</h4></a>
+            </div>
+        }
+
+    </div>
+</div>
+
+@code {
+     /*
+     * como en este form hay compos. blazor nested, no se asocia como model un obj usando prop model, sino que se usa un contexto
+     * de validación-enlazado : EditContext q puedes pasar como param en cascada a los compos.hijos del EditForm,
+     * y dentro de ellos, usando el EditContext hacer validaciones sobre el modelo q usa el EditContext :
+     *  - un obj modelo q asocias al editcontext en el constructor del mismo
+     *  - un obj ValidationMessageError q es un obj q almacena una lista de mensajes de error asociados a las props. del obj modelo del editcontext
+     *
+     * la validacion del obj modelo del editcontext se puede hacer :
+     * https://learn.microsoft.com/en-us/aspnet/core/blazor/forms/validation?view=aspnetcore-8.0#validator-components
+     *      - como siempre, con atributos en props DataAnnotations
+     *      - puedes personalizar usando un compo CustomValidator
+    */
+
+    //----------- optional params en querystring ::
+    [Parameter]
+    [SupplyParameterFromQuery(Name ="idcliente")]
+    public string? IdCliente { get; set; }
+    [Parameter]
+    [SupplyParameterFromQuery(Name ="idpedido")]
+    public string? IdPedido { get; set; }
+    //-----------------------------------------------
+
+    [CascadingParameter(Name = "loggedClient")]
+    public Cliente? loggedClient { get; set; }
+
+    [CascadingParameter(Name = "carrito")]
+    public List<Item>? itemList { get; set; }
+
+    public List<Provincia>? provinciasList { get; set; }
+    public Decimal total { get; set; }
+    public Decimal subtotal { get; set; }
+    public Decimal gastosEnvio { get; set; } = 3;
+
+    private OrderModel datosPago { get; set; } = new OrderModel();
+    private EditContext? orderFormEditContext { get; set; }
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        this.provinciasList = await this.restSvc.RetrieveProvincias();
+        this.gastosEnvio = 3;
+        this._calculateTotals();
+        this.orderFormEditContext = new EditContext(this.datosPago);
+    }
+
+
+    public void ModifyOrderItem(KeyValuePair<String, Item> itemdata)
+    {
+        this.storageSvc.OperateOrderItems(itemdata.Value.LibroItem,itemdata.Value.CantidadItem, itemdata.Key);
+        this._calculateTotals();
+        StateHasChanged();
+    }
+
+    public async Task CompleteOrder()
+    {
+        if(this.loggedClient == null || this.itemList == null || this.itemList.Count == 0){
+            return;
+        }
+        //---dir.envio ............
+        Direccion _ppalAddr = new Direccion();
+        IEnumerable<Direccion> _enumPpalAddr = this.loggedClient!.DireccionesCliente.Where((Direccion d) => d.EsPrincipal == true);
+
+        if (_enumPpalAddr.Any())
+        {
+            _ppalAddr = _enumPpalAddr.Single<Direccion>();
+        }
+
+        Direccion _orderDeliveryAddr = this.datosPago.TipoDireccionEnvio != "principal" ? this.datosPago.DireccionEnvio : _ppalAddr;
+
+        //---dir.facturacion .............
+        Direccion _billAddr = new Direccion();
+        IEnumerable<Direccion> _enumBillAddr = this.loggedClient.DireccionesCliente.Where((Direccion d) => d.EsFacturacion == true);
+
+        if (_enumBillAddr.Any())
+        {
+            _billAddr = _enumBillAddr.Single<Direccion>();
+        }
+
+        Direccion _billOrderAddr = this.datosPago.TipoDireccionFacturacion != "igualenvio" ? this.datosPago.DireccionFacturacion : _orderDeliveryAddr;
+
+        Pedido newOrder = new Pedido
+        {
+                DireccionEnvio = _orderDeliveryAddr,
+                DireccionFacturacion = _billOrderAddr,
+                ElementosPedido = this.itemList!,
+                EstadoPedido = "Pendiente de Pago",
+                FechaPedido = DateTime.Now,
+                IdCliente = this.loggedClient.IdCliente,
+                IdPedido = Guid.NewGuid().ToString(),
+                Total = this.total,
+                Subtotal = this.subtotal,
+                GastosEnvio = this.gastosEnvio
+
+        };
+        await this.jsSvc.InvokeVoidAsync("console.log","DATOS PAGO Y NUEVO PEDIDO.........", this.datosPago , newOrder);
+
+        //--> si quiero evitar volver a hacer un LOGIN encubierto cuendo el pago es por paypal (recuperar datos del user y token jwt)
+        // porque se pierden cuando salto a paypal para pagar , puedo meter estos datos en el localstorage....
+
+        string _urlSalto = await this.restSvc.CompleteOrder(this.datosPago, newOrder);
+        //await this.jsSvc.InvokeVoidAsync("window.location.assign", _urlSalto); <--- así perdemos todos los datos del pedido al cambiar de direccion
+
+        //---> lanzar una popup sería lo ideal , pero cuando finalice el pago , no puedo comunicar a la ventana de origen que ha finalizado todo correct
+        //por el cross-origin. Una posible solucion seria lanzar pet. cada cierto tiempo al servicio rest para saber si el pago ha finalizado ok o no
+        await this.jsSvc.InvokeVoidAsync("window.open", _urlSalto,"paypal","popup");
+
+
+
+    }
+
+    private void _calculateTotals()
+    {
+        //recalculamos subtotal y total del pedido :
+        // this.itemList = this.storageSvc.RetrieveOrderItems();
+        if (this.itemList?.Count > 0)
+        {
+            this.subtotal = this.itemList.Sum(item => item.CantidadItem * item.LibroItem.Precio);
+            this.gastosEnvio = this.subtotal > 30 ? 0.00m : 3.00m;
+            this.total = this.subtotal + this.gastosEnvio;
+        }
+    }
+
+
+    
+
+
+}

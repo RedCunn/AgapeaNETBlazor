@@ -1,0 +1,41 @@
+﻿@page "/Cliente/Panel/{section?}"
+@using Agapea_Blazor.Client.Pages.clientZone.paneles.inicio
+@using Agapea_Blazor.Client.Pages.clientZone.paneles.miscompras
+@using Agapea_Blazor.Client.Pages.clientZone.paneles.misopiniones
+@inject NavigationManager navigate
+
+<div class="container">
+    <div class="row">
+        <div class="col-3 border border-bottom-0 border-top-0 border-start-0 border-end-1 border-dark">
+            <AsidePanel></AsidePanel>
+        </div>
+        <div class="col-9 mt-4">
+            @switch (section)
+            {
+                case "Inicio":
+                <Inicio></Inicio>
+                    break;
+                case "MisCompras":
+                <MisCompras></MisCompras>
+                    break;
+                case "MisOpiniones":
+                <MisOpiniones></MisOpiniones>
+                    break;
+                case "MisListas":
+
+                    break;
+                case "Recomendador":
+
+                    break;
+                default:
+                    <Inicio></Inicio>
+                    break;
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public string? section { get; set; }
+
+}

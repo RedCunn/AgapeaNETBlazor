@@ -1,0 +1,109 @@
+{
+  "Files": [
+    {
+      "Id": "C:\\Users\\cunns\\source\\repos\\Agapea_Blazor\\Client\\bin\\Debug\\net7.0\\wwwroot\\_framework\\blazor.webassembly.js",
+      "PackagePath": "staticwebassets\\_framework\\blazor.webassembly.js"
+    },
+    {
+      "Id": "C:\\Users\\cunns\\source\\repos\\Agapea_Blazor\\Client\\obj\\Debug\\net7.0\\build-gz\\1ZL2FlHG.gz",
+      "PackagePath": "staticwebassets\\_framework\\blazor.webassembly.js.gz"
+    },
+    {
+      "Id": "C:\\Users\\cunns\\source\\repos\\Agapea_Blazor\\Client\\wwwroot\\JS\\ManageFormModals.js",
+      "PackagePath": "staticwebassets\\JS\\ManageFormModals.js"
+    },
+    {
+      "Id": "C:\\Users\\cunns\\source\\repos\\Agapea_Blazor\\Client\\wwwroot\\JS\\ManageForms.js",
+      "PackagePath": "staticwebassets\\JS\\ManageForms.js"
+    },
+    {
+      "Id": "C:\\Users\\cunns\\source\\repos\\Agapea_Blazor\\Client\\wwwroot\\JS\\ManageIndexedDB.js",
+      "PackagePath": "staticwebassets\\JS\\ManageIndexedDB.js"
+    },
+    {
+      "Id": "C:\\Users\\cunns\\source\\repos\\Agapea_Blazor\\Client\\wwwroot\\JS\\ManageLocalStorage.js",
+      "PackagePath": "staticwebassets\\JS\\ManageLocalStorage.js"
+    },
+    {
+      "Id": "C:\\Users\\cunns\\source\\repos\\Agapea_Blazor\\Client\\wwwroot\\JS\\ManageWorkers.js",
+      "PackagePath": "staticwebassets\\JS\\ManageWorkers.js"
+    },
+    {
+      "Id": "C:\\Users\\cunns\\source\\repos\\Agapea_Blazor\\Client\\wwwroot\\JS\\sharedworker.js",
+      "PackagePath": "staticwebassets\\JS\\sharedworker.js"
+    },
+    {
+      "Id": "C:\\Users\\cunns\\source\\repos\\Agapea_Blazor\\Client\\wwwroot\\css\\app.css",
+      "PackagePath": "staticwebassets\\css\\app.css"
+    },
+    {
+      "Id": "C:\\Users\\cunns\\source\\repos\\Agapea_Blazor\\Client\\wwwroot\\img\\1024px-Blue_check.svg.png",
+      "PackagePath": "staticwebassets\\img\\1024px-Blue_check.svg.png"
+    },
+    {
+      "Id": "C:\\Users\\cunns\\source\\repos\\Agapea_Blazor\\Client\\wwwroot\\img\\Aceptamos-tarjetas-VISA-MasterCard-y-Maestro.png",
+      "PackagePath": "staticwebassets\\img\\Aceptamos-tarjetas-VISA-MasterCard-y-Maestro.png"
+    },
+    {
+      "Id": "C:\\Users\\cunns\\source\\repos\\Agapea_Blazor\\Client\\wwwroot\\img\\agapea-logo.svg",
+      "PackagePath": "staticwebassets\\img\\agapea-logo.svg"
+    },
+    {
+      "Id": "C:\\Users\\cunns\\source\\repos\\Agapea_Blazor\\Client\\wwwroot\\img\\blank-profile-picture-973460_960_720.webp",
+      "PackagePath": "staticwebassets\\img\\blank-profile-picture-973460_960_720.webp"
+    },
+    {
+      "Id": "C:\\Users\\cunns\\source\\repos\\Agapea_Blazor\\Client\\wwwroot\\img\\bx-phone.svg",
+      "PackagePath": "staticwebassets\\img\\bx-phone.svg"
+    },
+    {
+      "Id": "C:\\Users\\cunns\\source\\repos\\Agapea_Blazor\\Client\\wwwroot\\img\\bxs-user.svg",
+      "PackagePath": "staticwebassets\\img\\bxs-user.svg"
+    },
+    {
+      "Id": "C:\\Users\\cunns\\source\\repos\\Agapea_Blazor\\Client\\wwwroot\\img\\login-agapea.png",
+      "PackagePath": "staticwebassets\\img\\login-agapea.png"
+    },
+    {
+      "Id": "C:\\Users\\cunns\\source\\repos\\Agapea_Blazor\\Client\\wwwroot\\img\\logo-agapea.jpg",
+      "PackagePath": "staticwebassets\\img\\logo-agapea.jpg"
+    },
+    {
+      "Id": "C:\\Users\\cunns\\source\\repos\\Agapea_Blazor\\Client\\wwwroot\\img\\mastercardlogos.png",
+      "PackagePath": "staticwebassets\\img\\mastercardlogos.png"
+    },
+    {
+      "Id": "C:\\Users\\cunns\\source\\repos\\Agapea_Blazor\\Client\\wwwroot\\img\\registro-completado-md.png",
+      "PackagePath": "staticwebassets\\img\\registro-completado-md.png"
+    },
+    {
+      "Id": "C:\\Users\\cunns\\source\\repos\\Agapea_Blazor\\Client\\wwwroot\\img\\registro-compras.png",
+      "PackagePath": "staticwebassets\\img\\registro-compras.png"
+    },
+    {
+      "Id": "C:\\Users\\cunns\\source\\repos\\Agapea_Blazor\\Client\\wwwroot\\img\\shelby-login.jpg",
+      "PackagePath": "staticwebassets\\img\\shelby-login.jpg"
+    },
+    {
+      "Id": "C:\\Users\\cunns\\source\\repos\\Agapea_Blazor\\Client\\wwwroot\\index.html",
+      "PackagePath": "staticwebassets\\index.html"
+    },
+    {
+      "Id": "obj\\Debug\\net7.0\\staticwebassets\\msbuild.Agapea_Blazor.Client.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Debug\\net7.0\\staticwebassets\\msbuild.build.Agapea_Blazor.Client.props",
+      "PackagePath": "build\\Agapea_Blazor.Client.props"
+    },
+    {
+      "Id": "obj\\Debug\\net7.0\\staticwebassets\\msbuild.buildMultiTargeting.Agapea_Blazor.Client.props",
+      "PackagePath": "buildMultiTargeting\\Agapea_Blazor.Client.props"
+    },
+    {
+      "Id": "obj\\Debug\\net7.0\\staticwebassets\\msbuild.buildTransitive.Agapea_Blazor.Client.props",
+      "PackagePath": "buildTransitive\\Agapea_Blazor.Client.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

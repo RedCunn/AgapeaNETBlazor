@@ -1,0 +1,67 @@
+﻿@page "/Tienda/FinalizarPedidoOK"
+@using Agapea_Blazor.Client.Models.Services.Interfaces
+@using Agapea_Blazor.Shared
+@*
+    si en la url vienen los dos params es que vengo del pago por paypal , tengo que recuperar de nuevo al cliente con un nuevo token de acceso 
+    y meterlo en el servicio del storage 
+*@
+@inject NavigationManager navigate
+@inject IRestService restSvc
+@inject IStorageService storageSvc
+
+<div class="container">
+    <div class="row">
+        <img src="~/img/1024px-Blue_check.svg.png" />
+    </div>
+    <div class="row">
+        <div class="col">
+            <p><h5>Pedido de : items : realizado correctamente</h5></p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <p>Has pagado  € en fecha :  en Agapea.com</p>
+            <p>Se te ha mandado un correo con la factura del mismo, consulta tu bandeja de entrada.</p>
+            <br />
+            <p>Accede al panel de tu User para ver ru lista de pedidos</p>
+        </div>
+    </div>
+    <div class="row d-flex justify-content-center">
+        <button @onclick="@(()=>this.navigate.NavigateTo("/Cliente/Panel"))" class="btn btn-success btn-lg">Ir a mi panel</button>
+    </div>
+</div>
+
+
+@code {
+
+    //----------- optional params en querystring ::
+    [Parameter]
+    [SupplyParameterFromQuery(Name = "idcliente")]
+    public string? IdCliente { get; set; }
+    [Parameter]
+    [SupplyParameterFromQuery(Name = "idpedido")]
+    public string? IdPedido { get; set; }
+    //-----------------------------------------------
+
+    public Pedido _completedOrder { get; set; }
+    public Cliente _clientdata { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        RestMessage res = await this.restSvc.LoginClient(IdCliente!);
+
+        if (res.Code == 0)
+        {
+            
+        }
+
+        this._completedOrder = this._clientdata.PedidosCliente
+                                               .Where((Pedido p) => p.IdPedido == IdPedido)
+                                               .Single<Pedido>();
+
+
+        
+    }
+
+
+}

@@ -1,0 +1,65 @@
+﻿@using Agapea_Blazor.Client.Models.Services.Interfaces
+@inject IStorageService storageSvc
+@inject IRestService restSvc
+
+<div class="row mb-5">
+    <div class="col-12" style="background-color:#F5F5F5">
+        
+            
+                <DatosEntrega ToggleFacturaEvent="@((value) => {this._checkedFactura = value;})"></DatosEntrega>
+                @if (_checkedFactura)
+                {
+                    <DatosFactura></DatosFactura>
+                }
+                <DatosPago tituloPago="@(this._checkedFactura ? "3. - Pago" : "2. - Pago")"></DatosPago>
+
+        <div class="col-12 p-2 my-3 d-flex flex-column">
+            <div>
+                <input type="checkbox" />
+                <label>Deseo recibir información sobre libros, novedades y eventos de Agapea.com o sus librerías.</label>
+            </div>
+            <div>
+                <input type="checkbox" />
+                <label>He leído y acepto la política de privacidad y cookies y las condiciones de contratación y devolución</label>
+            </div>
+        </div>
+
+        <div class="col-12 d-flex justify-content-center mb-5">
+            <div class="d-flex flex-row my-0">
+                <button class="btn btn-primary" @onclick="HandleValidSubmit">
+                    <box-icon name='package' type='solid' color='#ffffff' class="me-2"></box-icon>
+                    <p>Finalizar pedido</p>
+                    <box-icon name='package' type='solid' color='#ffffff' class="ms-2"></box-icon>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code{
+
+    [CascadingParameter(Name= "OrderFormEditContext")]
+    public EditContext? orderFormEditContext { get; set; }
+
+    [CascadingParameter(Name = "loggedClient")]
+    public Cliente? loggedClient { get; set; }
+
+    [CascadingParameter(Name = "provinciasList")]
+    public List<Provincia>? ProvinciasList { get; set; }
+
+    private List<Municipio> MunicipiosList { get; set; } = new List<Municipio>();
+
+    private bool _checkedFactura { get; set; } = false;
+
+    [Parameter]
+    public EventCallback OnValidSubmitChild { get; set; }
+
+    private async Task HandleValidSubmit()
+    {
+       
+        await OnValidSubmitChild.InvokeAsync();
+    }
+
+
+    
+}

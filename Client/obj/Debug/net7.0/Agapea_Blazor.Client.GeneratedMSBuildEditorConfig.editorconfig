@@ -1,0 +1,121 @@
+is_global = true
+build_property.TargetFramework = net7.0
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = 
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = false
+build_property.PlatformNeutralAssembly = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property._SupportedPlatformList = browser
+build_property.RootNamespace = Agapea_Blazor.Client
+build_property.RootNamespace = Agapea_Blazor.Client
+build_property.ProjectDir = C:\Users\cunns\source\repos\Agapea_Blazor\Client\
+build_property.RazorLangVersion = 7.0
+build_property.SupportLocalizedComponentNames = 
+build_property.GenerateRazorMetadataSourceChecksumAttributes = 
+build_property.MSBuildProjectDirectory = C:\Users\cunns\source\repos\Agapea_Blazor\Client
+build_property._RazorSourceGeneratorDebug = 
+
+[C:/Users/cunns/source/repos/Agapea_Blazor/Client/App.razor]
+build_metadata.AdditionalFiles.TargetPath = QXBwLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/cunns/source/repos/Agapea_Blazor/Client/MainLayout.razor]
+build_metadata.AdditionalFiles.TargetPath = TWFpbkxheW91dC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/cunns/source/repos/Agapea_Blazor/Client/Pages/clientZone/CustomValidatorInicioPanel.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcY2xpZW50Wm9uZVxDdXN0b21WYWxpZGF0b3JJbmljaW9QYW5lbC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/cunns/source/repos/Agapea_Blazor/Client/Pages/clientZone/Login.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcY2xpZW50Wm9uZVxMb2dpbi5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/cunns/source/repos/Agapea_Blazor/Client/Pages/clientZone/paneles/AsidePanel.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcY2xpZW50Wm9uZVxwYW5lbGVzXEFzaWRlUGFuZWwucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/cunns/source/repos/Agapea_Blazor/Client/Pages/clientZone/paneles/inicio/FormModalDirecciones.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcY2xpZW50Wm9uZVxwYW5lbGVzXGluaWNpb1xGb3JtTW9kYWxEaXJlY2Npb25lcy5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/cunns/source/repos/Agapea_Blazor/Client/Pages/clientZone/paneles/inicio/Inicio.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcY2xpZW50Wm9uZVxwYW5lbGVzXGluaWNpb1xJbmljaW8ucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/cunns/source/repos/Agapea_Blazor/Client/Pages/clientZone/paneles/inicio/MiniDireccion.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcY2xpZW50Wm9uZVxwYW5lbGVzXGluaWNpb1xNaW5pRGlyZWNjaW9uLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/cunns/source/repos/Agapea_Blazor/Client/Pages/clientZone/paneles/miscompras/MisCompras.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcY2xpZW50Wm9uZVxwYW5lbGVzXG1pc2NvbXByYXNcTWlzQ29tcHJhcy5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/cunns/source/repos/Agapea_Blazor/Client/Pages/clientZone/paneles/misopiniones/MisOpiniones.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcY2xpZW50Wm9uZVxwYW5lbGVzXG1pc29waW5pb25lc1xNaXNPcGluaW9uZXMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/cunns/source/repos/Agapea_Blazor/Client/Pages/clientZone/paneles/Panel.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcY2xpZW50Wm9uZVxwYW5lbGVzXFBhbmVsLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/cunns/source/repos/Agapea_Blazor/Client/Pages/clientZone/Registro.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcY2xpZW50Wm9uZVxSZWdpc3Ryby5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/cunns/source/repos/Agapea_Blazor/Client/Pages/clientZone/RegistroOK.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcY2xpZW50Wm9uZVxSZWdpc3Ryb09LLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/cunns/source/repos/Agapea_Blazor/Client/Pages/Index.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSW5kZXgucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/cunns/source/repos/Agapea_Blazor/Client/Pages/storeZone/DetallesLibro.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcc3RvcmVab25lXERldGFsbGVzTGlicm8ucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/cunns/source/repos/Agapea_Blazor/Client/Pages/storeZone/Libros.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcc3RvcmVab25lXExpYnJvcy5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/cunns/source/repos/Agapea_Blazor/Client/Pages/storeZone/MainHeader.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcc3RvcmVab25lXE1haW5IZWFkZXIucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/cunns/source/repos/Agapea_Blazor/Client/Pages/storeZone/MiniLibro.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcc3RvcmVab25lXE1pbmlMaWJyby5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/cunns/source/repos/Agapea_Blazor/Client/Pages/storeZone/MostrarPedido.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcc3RvcmVab25lXE1vc3RyYXJQZWRpZG8ucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/cunns/source/repos/Agapea_Blazor/Client/Pages/storeZone/PanelCategoriasLibros.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcc3RvcmVab25lXFBhbmVsQ2F0ZWdvcmlhc0xpYnJvcy5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/cunns/source/repos/Agapea_Blazor/Client/Pages/storeZone/pedido/DatosEntrega.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcc3RvcmVab25lXHBlZGlkb1xEYXRvc0VudHJlZ2EucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/cunns/source/repos/Agapea_Blazor/Client/Pages/storeZone/pedido/DatosFactura.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcc3RvcmVab25lXHBlZGlkb1xEYXRvc0ZhY3R1cmEucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/cunns/source/repos/Agapea_Blazor/Client/Pages/storeZone/pedido/DatosPago.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcc3RvcmVab25lXHBlZGlkb1xEYXRvc1BhZ28ucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/cunns/source/repos/Agapea_Blazor/Client/Pages/storeZone/pedido/DatosPedido.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcc3RvcmVab25lXHBlZGlkb1xEYXRvc1BlZGlkby5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/cunns/source/repos/Agapea_Blazor/Client/Pages/storeZone/pedido/ElementoPedido.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcc3RvcmVab25lXHBlZGlkb1xFbGVtZW50b1BlZGlkby5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/cunns/source/repos/Agapea_Blazor/Client/_Imports.razor]
+build_metadata.AdditionalFiles.TargetPath = X0ltcG9ydHMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 

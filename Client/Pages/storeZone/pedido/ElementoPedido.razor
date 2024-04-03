@@ -1,0 +1,62 @@
+﻿@using Agapea_Blazor.Client.Models.Services.Interfaces
+@inject IStorageService storageSvc
+
+<div class="row">
+    <!-- nos creamos un card por cada elmento del pedido -->
+    <div class="card mb-3" style="max-width: 540px;">
+        <div class="row g-0">
+            <div class="col-md-4">
+                <img src="@this.showedItem!.LibroItem.ImagenLibroBASE64" class="img-fluid rounded-start" alt="...">
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <div class="d-flex flex-row justify-content-between">
+                        <h5 class="card-title">@this.showedItem.LibroItem.Titulo</h5>
+                        <!-- boton para eliminar libro de showedItems pedido-->
+                        <a onclick="@(()=> @buttonsHandler("remove"))">
+                            <span style="color:red">
+                                <box-icon name='x-square' type='solid' color='#81838c'></box-icon>
+                            </span>
+                        </a>
+
+                    </div>
+                    <div class="d-flex flex-row justify-content-between">
+                        <a onclick="@(()=> @buttonsHandler("subs"))">
+                            <box-icon name='minus-square' type='solid' color='#81838c'></box-icon>
+                        </a>
+
+                        <label><small>@this.showedItem.CantidadItem</small></label>
+
+                        <a onclick="@(()=> @buttonsHandler("add"))">
+                            <box-icon name='plus-square' type='solid' color='#81838c'></box-icon>
+                        </a>
+
+                        <label><small>x</small><span style="color:red">@this.showedItem.LibroItem.Precio€</span></label>
+                        <label style="color:red">@(this.showedItem.LibroItem.Precio * this.showedItem.CantidadItem)€</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ------------------------------------------------ -->
+</div>
+
+@code {
+    [Parameter]
+    public Item? showedItem { get; set; }
+
+    [Parameter]
+    public EventCallback<KeyValuePair<String, Item>> operateItemEvent { get; set; } = new EventCallback<KeyValuePair<string, Item>>();
+
+    private async Task buttonsHandler(String operation)
+    {
+        switch (operation)
+        {
+            case "add": this.showedItem!.CantidadItem += 1; break;
+            case "subs": this.showedItem!.CantidadItem -= 1; break;
+            case "remove": this.showedItem!.CantidadItem = 0; break;
+        }
+        await this.operateItemEvent.InvokeAsync(new KeyValuePair<string, Item>(operation, this.showedItem!));
+        
+    }
+}

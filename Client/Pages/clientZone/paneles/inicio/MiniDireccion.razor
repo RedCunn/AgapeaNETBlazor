@@ -1,0 +1,25 @@
+﻿
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">@this.direc.Calle, CP: @this.direc.CP</h5>
+
+        <p class="card-text">Municipio: @this.direc.MunicipioDirec.DMUN50 ( Provincia: @this.direc.ProvinciaDirec.PRO )</p>
+        <p class="card-text"><span class="text-mutted">@this.direc.IdDireccion</span></p>
+
+        <button class="btn btn-outline-primary btn-sm" @onclick="@(()=>this.ModidyAddressEvent.InvokeAsync(this.direc))">Editar Direccion</button>
+        <button class="btn btn-outline-danger btn-sm" @onclick="@(()=>this.RemoveAddressEvent.InvokeAsync(this.direc))">Borrar Direccion</button>
+
+    </div>
+</div>
+
+
+@code {
+    [Parameter]
+    public Direccion direc { get; set; } = new Direccion();
+
+    [Parameter]
+    public EventCallback<Direccion> ModidyAddressEvent { get; set; } = new EventCallback<Direccion>();
+
+    [Parameter]
+    public EventCallback<Direccion> RemoveAddressEvent { get; set; } = new EventCallback<Direccion>();
+}
